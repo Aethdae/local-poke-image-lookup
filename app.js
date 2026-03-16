@@ -1,4 +1,5 @@
 const form = document.getElementById("pokeForm");
+const link = document.getElementById("link");
 
 let pokeApiData;
 
@@ -9,7 +10,7 @@ let pokeApiData;
       getPokemon(event.target.pokemonInput.value);
     }
     if (Boolean(event.target.nameInput.value) == true) {
-      getPokemon(getPokemonNumberFromString(event.target.nameInput.value));
+      getPokemonFromString(event.target.nameInput.value);
     }
   });
   try {
@@ -21,6 +22,33 @@ let pokeApiData;
     console.log(err);
   }
 })();
+
+async function getPokemonLinkFromAPI(name) {
+  try {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+    if (!res.ok) {
+      link.textContent = "Error: not found! Please try again.";
+      link.href = null;
+      return;
+    }
+    const pokemon = await res.json();
+    console.log(pokemon);
+    const { front_default } =
+      pokemon.sprites.versions["generation-ix"]["scarlet-violet"];
+    return front_default;
+  } catch (error) {
+    console.error(error);
+  }
+}
+async function getPokemonFromString(name) {
+  const pokeFront = await getPokemonLinkFromAPI(name);
+  setPokemonLink(pokeFront);
+}
+
+function setPokemonLink(url) {
+  link.href = url;
+  link.textContent = url;
+}
 
 function getPokemonNumberFromString(name) {
   for (let x = 0; x < pokeApiData.count; x++) {
@@ -42,7 +70,6 @@ function convertNum(num) {
 }
 
 function getPokemon(pokeNum) {
-  const link = document.getElementById("link");
   const pokeLink = `https://archives.bulbagarden.net/wiki/File:Menu_SV_${convertNum(pokeNum)}.png`;
   console.log(pokeLink);
   link.href = pokeLink;
