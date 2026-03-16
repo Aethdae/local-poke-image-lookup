@@ -1,5 +1,6 @@
 const form = document.getElementById("pokeForm");
 const link = document.getElementById("link");
+const output = document.getElementById("output");
 
 let pokeApiData;
 
@@ -43,8 +44,13 @@ async function getPokemonLinkFromAPI(name) {
 async function getPokemonFromString(name) {
   const pokeFront = await getPokemonLinkFromAPI(name);
   setPokemonLink(pokeFront);
+  addImage(pokeFront);
 }
-
+function addImage(url) {
+  const img = document.createElement("img");
+  img.src = url;
+  output.appendChild(img);
+}
 function setPokemonLink(url) {
   link.href = url;
   link.textContent = url;
